@@ -10,49 +10,42 @@ import {
 } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
 
-const products = [
-    {
-        id: "1",
-        name: "Sunil Joshi",
-        post: "Web Designer",
-        pname: "Elite Admin",
-        priority: "Low",
-        pbg: "primary.main",
-        budget: "3.9",
-    },
-    {
-        id: "2",
-        name: "Andrew McDownland",
-        post: "Project Manager",
-        pname: "Real Homes WP Theme",
-        priority: "Medium",
-        pbg: "secondary.main",
-        budget: "24.5",
-    },
-    {
-        id: "3",
-        name: "Christopher Jamil",
-        post: "Project Manager",
-        pname: "MedicalPro WP Theme",
-        priority: "High",
-        pbg: "error.main",
-        budget: "12.8",
-    },
-    {
-        id: "4",
-        name: "Nirav Joshi",
-        post: "Frontend Engineer",
-        pname: "Hosting Press HTML",
-        priority: "Critical",
-        pbg: "success.main",
-        budget: "2.4",
-    },
-];
+// GitHub repo details
+const GITHUB_API_URL = 'https://api.github.com/repos/obfusk/rbtlog/contents/logs';
+const GITHUB_RAW_BASE_URL = 'https://raw.githubusercontent.com/obfusk/rbtlog/log/';
+const files = ['https://raw.githubusercontent.com/obfusk/rbtlog/log/logs/ch.threema.app.libre.json']
+
+// Fetch product data from the GitHub repo
+const fetchProducts = async () => {
+    // const response = await fetch(GITHUB_API_URL, {
+    //     headers: { Accept: 'application/vnd.github.v3+json' },
+    // });
+
+    // if (!response.ok) {
+    //     throw new Error('Failed to fetch GitHub files');
+    // }
+
+    // const files = await response.json();
+
+    // Fetch content of each JSON file
+    const productPromises = files
+        .map((file) => fetch(`${file}`, {
+            headers: { 
+            Accept: 'application/vnd.github.v3+json' },
+            cache: 'force-cache', // Ensure the data is cached
+            next: {revalidate: 86400}
+        }).then((res) => res.json()));
+
+    return Promise.all(productPromises); // Return all parsed JSON
+};
 
 
-const ProductPerformance = () => {
+const ProductPerformance = async () => {
+    const log = await fetchProducts();
+    const threema = log[0];
+    console.log("Fetched data:", log); // Logs in the terminal
+    console.log("keys:", Object.entries(log[0].tags)); // Logs in the terminal
     return (
-
         <DashboardCard title="Product Performance">
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
@@ -66,34 +59,45 @@ const ProductPerformance = () => {
                         <TableRow>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Id
+                                    Application
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Assigned
+                                    Version
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Name
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Priority
+                                    APK source
                                 </Typography>
                             </TableCell>
                             <TableCell align="right">
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Budget
+                                    Reproducibility
+                                </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Last Build date
+                                </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Build recipe
+                                </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Source code
                                 </Typography>
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products.map((product) => (
-                            <TableRow key={product.name}>
+                        {log.map((app) => (
+                            Object.entries(app.tags).map(([version, value] : [string, any]) => (
+                            <TableRow key={version}>
                                 <TableCell>
                                     <Typography
                                         sx={{
@@ -101,52 +105,52 @@ const ProductPerformance = () => {
                                             fontWeight: "500",
                                         }}
                                     >
-                                        {product.id}
+                                        {app.appid}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Box
+                                    <Typography
                                         sx={{
-                                            display: "flex",
-                                            alignItems: "center",
+                                            fontSize: "15px",
+                                            fontWeight: "500",
                                         }}
                                     >
-                                        <Box>
-                                            <Typography variant="subtitle2" fontWeight={600}>
-                                                {product.name}
-                                            </Typography>
-                                            <Typography
-                                                color="textSecondary"
-                                                sx={{
-                                                    fontSize: "13px",
-                                                }}
-                                            >
-                                                {product.post}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
-                                        {product.pname}
+                                        {version}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "15px",
+                                            fontWeight: "500",
+                                        }}
+                                    >
+                                        {value[0].recipe.apk_url}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
                                     <Chip
                                         sx={{
                                             px: "4px",
-                                            backgroundColor: product.pbg,
+                                            backgroundColor: value[0].reproducible ? "#4caf50" : "#f44336",
                                             color: "#fff",
                                         }}
                                         size="small"
-                                        label={product.priority}
+                                        label={value[0].reproducible ? "Sucess" : "Failure"}
                                     ></Chip>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Typography variant="h6">${product.budget}k</Typography>
+                                <Typography
+                                        sx={{
+                                            fontSize: "15px",
+                                            fontWeight: "500",
+                                        }}
+                                    >
+                                        {new Date(parseInt(value[0].timestamp)*1000).toLocaleDateString()}
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ))))}
                     </TableBody>
                 </Table>
             </Box>
