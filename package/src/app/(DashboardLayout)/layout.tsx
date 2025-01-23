@@ -38,11 +38,11 @@ export default function RootLayout({
       {/* ------------------------------------------- */}
       {/* Sidebar */}
       {/* ------------------------------------------- */}
-      <Sidebar
+      {/* <Sidebar
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
-      />
+      /> */}
       {/* ------------------------------------------- */}
       {/* Main Wrapper */}
       {/* ------------------------------------------- */}
@@ -50,7 +50,7 @@ export default function RootLayout({
         {/* ------------------------------------------- */}
         {/* Header */}
         {/* ------------------------------------------- */}
-        <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+        {/* <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} /> */}
         {/* ------------------------------------------- */}
         {/* PageContent */}
         {/* ------------------------------------------- */}
