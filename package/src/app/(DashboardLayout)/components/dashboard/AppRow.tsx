@@ -119,6 +119,7 @@ function AppRow({
             borderRadius: "50px",
             minWidth: "20px",
           }}
+          size="small"
           variant="contained"
           color="primary"
           onClick={() => window.open(row.recipe.apk_url)}
@@ -141,6 +142,7 @@ function AppRow({
             }}
             variant="contained"
             color="primary"
+            size="small"
             onClick={() =>
               window.open(
                 row.recipe.repository.replace(".git", "") + "/tree/" + version
@@ -166,6 +168,7 @@ function AppRow({
             }}
             variant="contained"
             color="primary"
+            size="small"
             onClick={() => openPlainTextWindow(row.recipe.build)}
             style={{ textTransform: "none" }}
           >
@@ -187,6 +190,7 @@ function AppRow({
             }}
             variant="contained"
             color="primary"
+            size="small"
             onClick={() => openPlainTextWindow(row.build_log)}
             style={{ textTransform: "none" }}
           >
