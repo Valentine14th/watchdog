@@ -17,11 +17,11 @@ const APP_IMAGES: Record<string, string> = {
   "ch.threema.app.onprem": "/images/logos/threema-onprem.png",
 };
 const ARCHITECTURES = [
+  "enable true",
   "arm64-v8a",
   "armeabi-v7a",
   "x86_64",
   "x86",
-  "enable true",
 ];
 
 const parseArchitecture = (apk: any) => {
@@ -41,6 +41,14 @@ const openPlainTextWindow = (text: string) => {
     );
   }
 };
+
+const getReproduciblilityText = (reproducible: any) => {
+  return reproducible == null ? "Error" : reproducible ? "Success" : "Failure";
+}
+
+const getReproduciblilityColor = (reproducible: any) => {
+  return reproducible == null ? "#a7aaab" : reproducible ? "#4caf50" : "#f44336";
+}
 
 function AppRow({
   row,
@@ -93,14 +101,24 @@ function AppRow({
         </Typography>
       </TableCell>
       <TableCell align="center">
+        <Typography
+          sx={{
+            fontSize: "15px",
+            fontWeight: "500",
+          }}
+        >
+          {row.version_code}
+        </Typography>
+      </TableCell>
+      <TableCell align="center">
         <Chip
           sx={{
             px: "4px",
-            backgroundColor: row.reproducible ? "#4caf50" : "#f44336",
+            backgroundColor: getReproduciblilityColor(row.reproducible),
             color: "#fff",
           }}
           size="small"
-          label={row.reproducible ? "Sucess" : "Failure"}
+          label={getReproduciblilityText(row.reproducible)}
         ></Chip>
       </TableCell>
       <TableCell align="center">

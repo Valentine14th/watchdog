@@ -8,6 +8,20 @@ const files = [
   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.onprem.json",
 ];
 
+const sortTags = (data: any) => {
+  const sortedTags = Object.entries(data.tags).sort(([a] : any, [b] : any) => {
+      const [majorA, minorA = 0, patchA = 0] = a.split('.').map(Number);
+      const [majorB, minorB = 0, patchB = 0] = b.split('.').map(Number);
+      return (
+        majorB - majorA || 
+        minorB - minorA || 
+        patchB - patchA    
+      );
+  });
+  data.tags = Object.fromEntries(sortedTags);
+  return data;
+};
+
 const Log = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -25,7 +39,7 @@ const Log = () => {
               },
               cache: "force-cache", // Ensure the data is cached
               next: { revalidate: 86400 }, // Revalidate the data every 24 hours
-            }).then((res) => res.json())
+            }).then(async (res) => sortTags(await res.json()))
           )
         );
         setLog(results);
