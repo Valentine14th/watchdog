@@ -1,9 +1,21 @@
-import { Button, Chip, TableCell, TableRow, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  TableCell,
+  TableRow,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import BuildIcon from "@mui/icons-material/Build";
 import SourceIcon from "@mui/icons-material/Source";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import Image from "next/image";
+import { Content } from "next/font/google";
 
 // Display constants
 const APPS: Record<string, string> = {
@@ -44,11 +56,25 @@ const openPlainTextWindow = (text: string) => {
 
 const getReproduciblilityText = (reproducible: any) => {
   return reproducible == null ? "Error" : reproducible ? "Success" : "Failure";
-}
+};
 
 const getReproduciblilityColor = (reproducible: any) => {
-  return reproducible == null ? "#a7aaab" : reproducible ? "#4caf50" : "#f44336";
-}
+  return reproducible == null
+    ? "#a7aaab"
+    : reproducible
+    ? "#4caf50"
+    : "#f44336";
+};
+
+const InfoButton = ({ explanation }: { explanation: string }) => {
+  return (
+    <Tooltip title={explanation} arrow>
+      <IconButton color="error">
+        <WarningAmberRoundedIcon />
+      </IconButton>
+    </Tooltip>
+  );
+};
 
 function AppRow({
   row,
@@ -62,23 +88,40 @@ function AppRow({
   return (
     <TableRow>
       <TableCell align="center">
-        <Typography
+        {
+          row["notes"] && row["notes"].length > 0 ? (
+            <InfoButton explanation={row["notes"].join(",")}/>
+          ) : ""
+        }
+
+      </TableCell>
+      <TableCell align="center">
+        <Box
           sx={{
-            fontSize: "15px",
-            fontWeight: "500",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Image
-            src={APP_IMAGES[appid]}
-            alt={`${APPS[appid]} logo`}
-            width={40}
-            height={40}
-            style={{
-              borderRadius: "10px",
-              objectFit: "cover",
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: "500",
             }}
-          />
-        </Typography>
+          >
+            <Image
+              src={APP_IMAGES[appid]}
+              alt={`${APPS[appid]} logo`}
+              width={40}
+              height={40}
+              style={{
+                borderRadius: "10px",
+                objectFit: "cover",
+              }}
+            />
+          </Typography>
+          <Typography sx={{ ml: "10px" }}>{APPS[appid]}</Typography>
+        </Box>
       </TableCell>
       <TableCell align="center">
         <Typography
@@ -120,6 +163,34 @@ function AppRow({
           size="small"
           label={getReproduciblilityText(row.reproducible)}
         ></Chip>
+      </TableCell>
+      <TableCell align="center">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            direction: "row",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: "500",
+            }}
+          >
+            {row["signature_copied_apk_sha256"].substring(0, 8)}
+          </Typography>
+          <IconButton
+            sx={{ marginLeft: "2px" }}
+            size="small"
+            onClick={() =>
+              navigator.clipboard.writeText(row["signature_copied_apk_sha256"])
+            }
+          >
+            <ContentCopyIcon sx={{ width: "20px" }} />
+          </IconButton>
+        </Box>
       </TableCell>
       <TableCell align="center">
         <Typography
@@ -171,6 +242,32 @@ function AppRow({
             <SourceIcon />
           </Button>
         </Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            direction: "row",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: "500",
+            }}
+          >
+            {row["commit"].substring(0, 8)}
+          </Typography>
+          <IconButton
+            sx={{ marginLeft: "2px" }}
+            size="small"
+            onClick={() => navigator.clipboard.writeText(row["commit"])}
+          >
+            <ContentCopyIcon sx={{ width: "20px" }} />
+          </IconButton>
+        </Box>
       </TableCell>
       <TableCell align="center">
         <Typography

@@ -12,12 +12,12 @@ const baselightTheme = createTheme({
   direction: "ltr",
   palette: {
     primary: {
-      main: "#5D87FF",
-      light: "#ECF2FF",
-      dark: "#4570EA",
+      main: "#2e2e2e",
+      light: "#00a83d",
+      dark: "#00a83d",
     },
     secondary: {
-      main: "#49BEFF",
+      main: "#00a83d",
       light: "#E8F7FF",
       dark: "#23afdb",
     },
@@ -34,7 +34,7 @@ const baselightTheme = createTheme({
       contrastText: "#ffffff",
     },
     error: {
-      main: "#FA896B",
+      main: "#f44336",
       light: "#FDEDE8",
       dark: "#f3704d",
       contrastText: "#ffffff",
@@ -60,7 +60,7 @@ const baselightTheme = createTheme({
     action: {
       disabledBackground: "rgba(73,82,88,0.12)",
       hoverOpacity: 0.02,
-      hover: "#f6f9fc",
+      hover: "#00a83d",
     },
     divider: "#e5eaef",
   },

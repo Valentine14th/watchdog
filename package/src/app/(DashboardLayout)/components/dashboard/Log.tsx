@@ -2,21 +2,27 @@ import { useEffect, useState } from "react";
 import LogTable from "./LogTable";
 
 // GitHub repo details
+// const files = [
+//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.libre.json",
+//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.work.json",
+//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.onprem.json",
+// ];
+// const files = [
+//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.libre.json",
+//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.work.json",
+//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.onprem.json",
+// ];
 const files = [
-  "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.libre.json",
-  "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.work.json",
-  "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.onprem.json",
-];
+  "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.libre.json",
+  "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.work.json",
+  "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.onprem.json",
+]
 
 const sortTags = (data: any) => {
-  const sortedTags = Object.entries(data.tags).sort(([a] : any, [b] : any) => {
-      const [majorA, minorA = 0, patchA = 0] = a.split('.').map(Number);
-      const [majorB, minorB = 0, patchB = 0] = b.split('.').map(Number);
-      return (
-        majorB - majorA || 
-        minorB - minorA || 
-        patchB - patchA    
-      );
+  const sortedTags = Object.entries(data.tags).sort(([a]: any, [b]: any) => {
+    const [majorA, minorA = 0, patchA = 0] = a.split(".").map(Number);
+    const [majorB, minorB = 0, patchB = 0] = b.split(".").map(Number);
+    return majorB - majorA || minorB - minorA || patchB - patchA;
   });
   data.tags = Object.fromEntries(sortedTags);
   return data;
