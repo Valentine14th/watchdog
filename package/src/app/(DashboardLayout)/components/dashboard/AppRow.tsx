@@ -13,7 +13,8 @@ import BuildIcon from "@mui/icons-material/Build";
 import SourceIcon from "@mui/icons-material/Source";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import FormatAlignJustifyRoundedIcon from '@mui/icons-material/FormatAlignJustifyRounded';
 import Image from "next/image";
 import { Content } from "next/font/google";
 
@@ -29,7 +30,7 @@ const APP_IMAGES: Record<string, string> = {
   "ch.threema.app.onprem": "/images/logos/threema-onprem.png",
 };
 const ARCHITECTURES = [
-  "enable true",
+  "universal",
   "arm64-v8a",
   "armeabi-v7a",
   "x86_64",
@@ -37,8 +38,8 @@ const ARCHITECTURES = [
 ];
 
 const parseArchitecture = (apk: any) => {
-  let abi = ARCHITECTURES.find((arch) => apk.recipe.build.includes(arch));
-  return abi == "enable true" ? "universal" : abi;
+  let abi = ARCHITECTURES.find((arch) => apk.recipe.apk_pattern.includes(arch));
+  return abi ? abi : "unknown";
 };
 
 const openPlainTextWindow = (text: string) => {
@@ -88,12 +89,11 @@ function AppRow({
   return (
     <TableRow>
       <TableCell align="center">
-        {
-          row["notes"] && row["notes"].length > 0 ? (
-            <InfoButton explanation={row["notes"].join(",")}/>
-          ) : ""
-        }
-
+        {row["notes"] && row["notes"].length > 0 ? (
+          <InfoButton explanation={row["notes"].join(",")} />
+        ) : (
+          ""
+        )}
       </TableCell>
       <TableCell align="center">
         <Box
@@ -310,6 +310,28 @@ function AppRow({
             style={{ textTransform: "none" }}
           >
             <ManageSearchIcon />
+          </Button>
+        </Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Typography
+          sx={{
+            fontSize: "15px",
+            fontWeight: "500",
+          }}
+        >
+          <Button
+            sx={{
+              borderRadius: "50px",
+              minWidth: "20px",
+            }}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => openPlainTextWindow(JSON.stringify(row, null, 2))}
+            style={{ textTransform: "none" }}
+          >
+            <FormatAlignJustifyRoundedIcon />
           </Button>
         </Typography>
       </TableCell>

@@ -113,6 +113,12 @@ const LogTableHead = ({ log }: { log: any }) => {
             <HelpButton explanation="The information generated during the build process." />
           </Typography>
         </TableCell>
+        <TableCell align="center">
+          <Typography variant="subtitle2" fontWeight={600}>
+            Raw log
+            <HelpButton explanation="The raw json log." />
+          </Typography>
+        </TableCell>
       </TableRow>
     </TableHead>
   );

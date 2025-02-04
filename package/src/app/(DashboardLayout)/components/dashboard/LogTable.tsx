@@ -10,17 +10,13 @@ const allArchitectures = [
   "universal",
   "arm64-v8a",
   "armeabi-v7a",
-  "x86",
   "x86_64",
+  "x86",
 ];
 
 const parseArchitecture = (apk: any) => {
-  let abi = allArchitectures.find((arch) => apk.recipe.build.includes(arch));
-  if (abi == undefined) {
-    let uni = ["enable true"].find((arch) => apk.recipe.build.includes(arch));
-    return uni == "enable true" ? "universal" : "unknown";
-  }
-  return abi;
+  let abi = allArchitectures.find((arch) => apk.recipe.apk_pattern.includes(arch));
+  return abi ? abi : "unknown";
 };
 
 const allApplications: Record<string, string> = {
