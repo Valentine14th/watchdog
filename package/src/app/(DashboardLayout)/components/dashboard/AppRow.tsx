@@ -16,7 +16,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import FormatAlignJustifyRoundedIcon from '@mui/icons-material/FormatAlignJustifyRounded';
 import Image from "next/image";
-import { Content } from "next/font/google";
 
 // Display constants
 const APPS: Record<string, string> = {
@@ -39,6 +38,10 @@ const ARCHITECTURES = [
 
 const parseArchitecture = (apk: any) => {
   let abi = ARCHITECTURES.find((arch) => apk.recipe.apk_pattern.includes(arch));
+  if (!abi){
+    let uni = ["enable true"].find((arch) => apk.recipe.build.includes(arch));
+    abi = uni ? "universal" : undefined
+  }
   return abi ? abi : "unknown";
 };
 

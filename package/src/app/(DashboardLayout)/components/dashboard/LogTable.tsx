@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Table, TableBody, Typography } from "@mui/material";
+import { Box, IconButton, Table, TableBody, Typography } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
 import AppRow from "./AppRow";
 import { useState, useMemo } from "react";
@@ -12,10 +12,15 @@ const allArchitectures = [
   "armeabi-v7a",
   "x86_64",
   "x86",
+  "unknown"
 ];
 
 const parseArchitecture = (apk: any) => {
   let abi = allArchitectures.find((arch) => apk.recipe.apk_pattern.includes(arch));
+  if (!abi){
+    let uni = ["enable true"].find((arch) => apk.recipe.build.includes(arch));
+    abi = uni ? "universal" : undefined
+  }
   return abi ? abi : "unknown";
 };
 
@@ -42,7 +47,7 @@ const filterQuery = (
 ) => {
   return (
     filterVersion.includes(version) &&
-    filterApplications.includes(allApplications[application]) &&
+    filterApplications.includes(application) &&
     filterArch.includes(architecture) &&
     filterReproducible.map((rep) => allReproducible[rep]).includes(reproducible)
   );
@@ -89,7 +94,7 @@ const LogTable = ({ log }: { log: any[] }) => {
       filterQuery(
         version,
         parseArchitecture(apk),
-        apk.appid,
+        allApplications[apk.appid],
         apk.reproducible,
         selectedVersions.length == 0 ? allVersions : selectedVersions,
         selectedApp.length == 0 ? Object.values(allApplications) : selectedApp,

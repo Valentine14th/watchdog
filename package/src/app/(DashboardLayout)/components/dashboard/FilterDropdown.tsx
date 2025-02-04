@@ -7,12 +7,7 @@ import {
   OutlinedInput,
   Select,
 } from "@mui/material";
-import { useMemo } from "react";
-
-const handleChange = (event: any, setSelectedOptions: any) => {
-  const value = event.target.value;
-  setSelectedOptions(value);
-};
+import { useCallback, useMemo } from "react";
 
 function FilterDropdown({
   description,
@@ -35,6 +30,12 @@ function FilterDropdown({
     )),
   [allOptions, selectedOptions]);
 
+  const handleChange = useCallback((event: any) => {
+    const value = event.target.value;
+    setSelectedoptions(value);
+  }, [setSelectedoptions])
+
+  const selectedText = useMemo(() => selectedOptions.join(", "), [selectedOptions]);
 
   return (
     <div style={{ width: "300px", margin: "20px auto", textAlign: "center", padding: "10px" }}>
@@ -43,9 +44,9 @@ function FilterDropdown({
         <Select
           multiple
           value={selectedOptions}
-          onChange={(e) => handleChange(e, setSelectedoptions)}
+          onChange={(e) => handleChange(e)}
           input={<OutlinedInput label={description} />}
-          renderValue={(selected) => selected.join(", ")}
+          renderValue={(selected) => selectedText}
         >
           {menuItems}
         </Select>
