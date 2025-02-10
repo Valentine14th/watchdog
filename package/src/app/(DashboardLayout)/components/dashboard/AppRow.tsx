@@ -35,6 +35,12 @@ const ARCHITECTURES = [
   "x86_64",
   "x86",
 ];
+const COLOURS = {
+  success: "#4caf50",
+  failure: "#f44336",
+  error: "#a7aaab",
+  warning: "#ff9800",
+};
 
 const parseArchitecture = (apk: any) => {
   let abi = ARCHITECTURES.find((arch) => apk.recipe.apk_pattern.includes(arch));
@@ -62,18 +68,20 @@ const getReproduciblilityText = (reproducible: any) => {
   return reproducible == null ? "Error" : reproducible ? "Success" : "Failure";
 };
 
-const getReproduciblilityColor = (reproducible: any) => {
-  return reproducible == null
-    ? "#a7aaab"
-    : reproducible
-    ? "#4caf50"
-    : "#f44336";
+const getReproduciblilityColor = (reproducible: any, notes: boolean) => {
+  if(notes){
+    return COLOURS.warning;
+  }
+  if (reproducible === null) {
+    return COLOURS.error;
+  }
+  return reproducible ? COLOURS.success : COLOURS.failure;
 };
 
 const InfoButton = ({ explanation }: { explanation: string }) => {
   return (
     <Tooltip title={explanation} arrow>
-      <IconButton color="error">
+      <IconButton color="warning">
         <WarningAmberRoundedIcon />
       </IconButton>
     </Tooltip>
@@ -160,7 +168,7 @@ function AppRow({
         <Chip
           sx={{
             px: "4px",
-            backgroundColor: getReproduciblilityColor(row.reproducible),
+            backgroundColor: getReproduciblilityColor(row.reproducible, row["notes"] && row["notes"].length > 0),
             color: "#fff",
           }}
           size="small"
