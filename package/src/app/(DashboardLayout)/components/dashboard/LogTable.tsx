@@ -4,7 +4,7 @@ import AppRow from "./AppRow";
 import { useState, useMemo } from "react";
 import LogTableHead from "./LogTableHead";
 import FilterDropdown from "./FilterDropdown";
-import ReplayIcon from '@mui/icons-material/Replay';
+import ReplayIcon from "@mui/icons-material/Replay";
 
 const allArchitectures = [
   "universal",
@@ -12,14 +12,16 @@ const allArchitectures = [
   "armeabi-v7a",
   "x86_64",
   "x86",
-  "unknown"
+  "unknown",
 ];
 
 const parseArchitecture = (apk: any) => {
-  let abi = allArchitectures.find((arch) => apk.recipe.apk_pattern.includes(arch));
-  if (!abi){
+  let abi = allArchitectures.find((arch) =>
+    apk.recipe.apk_pattern.includes(arch)
+  );
+  if (!abi) {
     let uni = ["enable true"].find((arch) => apk.recipe.build.includes(arch));
-    abi = uni ? "universal" : undefined
+    abi = uni ? "universal" : undefined;
   }
   return abi ? abi : "unknown";
 };
@@ -69,28 +71,11 @@ const LogTable = ({ log }: { log: any[] }) => {
   };
 
   const allVersions = useMemo(() => {
-    let out = new Set<string>();
-    for (const app of log) {
-      for (const [version, apks] of Object.entries(app.tags)) {
-        out.add(version);
-      }
-    }
-    return Array.from(out);
+    return log.map(([version, apk]: [string, any]) => version);
   }, [log]);
 
   const filteredLogs: any[] = useMemo(() => {
-    let out: [string, any][] = [];
-    for (const app of log) {
-      for (const [version, apks] of Object.entries(app.tags) as [
-        string,
-        any[]
-      ][]) {
-        for (const apk of apks) {
-          out.push([version, apk]);
-        }
-      }
-    }
-    out = out.filter(([version, apk]: [string, any]) =>
+    return log.filter(([version, apk]: [string, any]) =>
       filterQuery(
         version,
         parseArchitecture(apk),
@@ -104,7 +89,6 @@ const LogTable = ({ log }: { log: any[] }) => {
           : selectedReproducible
       )
     );
-    return out;
   }, [
     allVersions,
     log,
@@ -149,11 +133,15 @@ const LogTable = ({ log }: { log: any[] }) => {
             selectedOptions={selectedReproducible}
             setSelectedoptions={setSelectedReproducible}
           />
-          <IconButton sx={{marginY: "40px"}} size="small" onClick={handleReset}>
+          <IconButton
+            sx={{ marginY: "40px" }}
+            size="small"
+            onClick={handleReset}
+          >
             <ReplayIcon />
           </IconButton>
         </Box>
-        <DashboardCard >
+        <DashboardCard>
           <Table stickyHeader aria-label="logs">
             <LogTableHead log={log} />
             <TableBody>

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@devicefarmer/adbkit-apkreader": "^3.2.4",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.1",
     "@emotion/server": "11.11.0",

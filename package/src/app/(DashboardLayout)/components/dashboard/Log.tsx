@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LogTable from "./LogTable";
+import ApkSha256Uploader from "./ApkUploader";
 
 // GitHub repo details
 // const files = [
@@ -16,7 +17,7 @@ const files = [
   "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.libre.json",
   "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.work.json",
   "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.onprem.json",
-]
+];
 
 const sortTags = (data: any) => {
   const sortedTags = Object.entries(data.tags).sort(([a]: any, [b]: any) => {
@@ -32,6 +33,22 @@ const Log = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [log, setLog] = useState<any[]>([]);
+
+  const flatLog = useMemo(() => {
+    let out: [string, any][] = [];
+    if(!log || log.length == 0) return out;
+    for (const app of log) {
+      for (const [version, apks] of Object.entries(app.tags) as [
+        string,
+        any[]
+      ][]) {
+        for (const apk of apks) {
+          out.push([version, apk]);
+        }
+      }
+    }
+    return out;
+  }, [log]);
 
   // Fetch data from the GitHub repo
   useEffect(() => {
@@ -61,7 +78,12 @@ const Log = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error fetching logs</div>;
 
-  return <LogTable log={log} />;
+  return (
+    <>
+      <ApkSha256Uploader log={flatLog} />
+      <LogTable log={flatLog} />
+    </>
+  );
 };
 
 export default Log;
