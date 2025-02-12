@@ -10,23 +10,23 @@ import HelpOutline from "@mui/icons-material/HelpOutline";
 
 const HelpButton = ({ explanation }: { explanation: string }) => {
   return (
-    <Tooltip title={explanation} arrow>
-      <IconButton color="primary">
+    <Tooltip title={explanation} arrow sx={{whiteSpace: "pre-line"}}>
+      <IconButton sx={{color: "grey"}}>
         <HelpOutline/>
       </IconButton>
     </Tooltip>
   );
 };
 
-const LogTableHead = ({ log }: { log: any }) => {
+const LogTableHead = () => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell width={"2000px"} align="center"></TableCell>
+        <TableCell align="center"></TableCell>
         <TableCell align="center">
           <Typography variant="subtitle2" fontWeight={600}>
             Application
-            <HelpButton explanation="The application type (Libre, Work, onPrem)." />
+            <HelpButton explanation="The application type." />
           </Typography>
         </TableCell>
         <TableCell align="center">
@@ -48,8 +48,8 @@ const LogTableHead = ({ log }: { log: any }) => {
           <Typography variant="subtitle2" fontWeight={600}>
             Version Code
             <HelpButton
-              explanation="The specific version of the binary. 
-                        This can be found at Settings>About Threema>Version (double-click)"
+              explanation={`The specific version of the binary. \n
+                        This can be found at Settings>About Threema>Version (double-click)`}
             />
           </Typography>
         </TableCell>
@@ -57,10 +57,10 @@ const LogTableHead = ({ log }: { log: any }) => {
           <Typography variant="subtitle2" fontWeight={600}>
             Reproducibility
             <HelpButton
-              explanation="Whether the reproduction attempt was succesful. 
+              explanation={`Whether the reproduction attempt was succesful. 
                         Although there could be harmless reasons why this happened, if the reproduction fails, it means the app might be compromised. 
                         To be safe, it is best to stop using the app while furhter investigation is made. 
-                        If the apk could not build at all, you can look at the 'Build Log' command to try to figure out the reason"
+                        If the apk could not build at all, you can look at the 'Build Log' command to try to figure out the reason`}
             />
           </Typography>
         </TableCell>
