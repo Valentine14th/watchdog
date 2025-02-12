@@ -27,7 +27,7 @@ export default function ApkUploadInfoDropdown() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography sx={{ fontWeight: "bold", marginBottom: "10px" }}>
-            {`To be able to pull APKs from your device, you first need to enable developer options and USB debugging on your device:`}
+            {`To be able to pull APKs from your device, you first need to enable developer options and USB debugging on your device.`}
           </Typography>
           <Typography
             variant="body1"
