@@ -1,7 +1,14 @@
-import { Box, IconButton, Table, TableBody, Typography } from "@mui/material";
-import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
+import {
+  Box,
+  IconButton,
+  Table,
+  TableBody,
+  TablePagination,
+  Typography,
+} from "@mui/material";
+import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import AppRow from "./AppRow";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import LogTableHead from "./LogTableHead";
 import FilterDropdown from "./FilterDropdown";
 import ReplayIcon from "@mui/icons-material/Replay";
@@ -27,7 +34,7 @@ const parseArchitecture = (apk: any) => {
 };
 
 const allApplications: Record<string, string> = {
-  "ch.threema.app.libre": "Threema",
+  "ch.threema.app.libre": "Threema Libre",
   "ch.threema.app.work": "Threema Work",
   "ch.threema.app.onprem": "Threema OnPrem",
 };
@@ -56,12 +63,14 @@ const filterQuery = (
 };
 
 const LogTable = ({ log }: { log: any[] }) => {
-  const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
-  const [selectedArch, setSelectedArch] = useState<string[]>([]);
-  const [selectedApp, setSelectedApp] = useState<string[]>([]);
+  const [selectedVersions, setSelectedVersions] = useState([]);
+  const [selectedArch, setSelectedArch] = useState([]);
+  const [selectedApp, setSelectedApp] = useState([]);
   const [selectedReproducible, setSelectedReproducible] = useState<string[]>(
     []
   );
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleReset = () => {
     setSelectedVersions([]);
@@ -71,7 +80,9 @@ const LogTable = ({ log }: { log: any[] }) => {
   };
 
   const allVersions = useMemo(() => {
-    return log.map(([version, apk]: [string, any]) => version);
+    return Array.from(
+      new Set(log.map(([version, apk]: [string, any]) => version))
+    );
   }, [log]);
 
   const filteredLogs: any[] = useMemo(() => {
@@ -81,10 +92,10 @@ const LogTable = ({ log }: { log: any[] }) => {
         parseArchitecture(apk),
         allApplications[apk.appid],
         apk.reproducible,
-        selectedVersions.length == 0 ? allVersions : selectedVersions,
-        selectedApp.length == 0 ? Object.values(allApplications) : selectedApp,
-        selectedArch.length == 0 ? allArchitectures : selectedArch,
-        selectedReproducible.length == 0
+        selectedVersions.length === 0 ? allVersions : selectedVersions,
+        selectedApp.length === 0 ? Object.values(allApplications) : selectedApp,
+        selectedArch.length === 0 ? allArchitectures : selectedArch,
+        selectedReproducible.length === 0
           ? Object.keys(allReproducible)
           : selectedReproducible
       )
@@ -97,6 +108,19 @@ const LogTable = ({ log }: { log: any[] }) => {
     selectedReproducible,
     selectedVersions,
   ]);
+
+  const handleChangePage = (event: any, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: any) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const resetPages = useEffect(() => {
+    setPage(0);
+  }, [selectedVersions, selectedArch, selectedApp, selectedReproducible]);
 
   return (
     <DashboardCard title="Reproducible Build Log">
@@ -142,27 +166,40 @@ const LogTable = ({ log }: { log: any[] }) => {
           </IconButton>
         </Box>
         <DashboardCard>
-          <Table stickyHeader aria-label="logs">
-            <LogTableHead log={log} />
-            <TableBody>
-              {filteredLogs.length != 0 ? (
-                filteredLogs.map(([version, apk]: [string, any]) => (
-                  <AppRow
-                    key={`${apk.appid}:${apk.version_code}`}
-                    row={apk}
-                    appid={apk.appid}
-                    version={version}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={10} style={{ textAlign: "center" }}>
-                    No corresponding logs found. Try another filter.
-                  </td>
-                </tr>
-              )}
-            </TableBody>
-          </Table>
+          <>
+            <Table stickyHeader aria-label="logs">
+              <LogTableHead />
+              <TableBody>
+                {filteredLogs.length !== 0 ? (
+                  filteredLogs
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map(([version, apk]) => (
+                      <AppRow
+                        key={`${apk.appid}:${apk.version_code}`}
+                        row={apk}
+                        appid={apk.appid}
+                        version={version}
+                      />
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan={10} style={{ textAlign: "center" }}>
+                      No corresponding logs found. Try another filter.
+                    </td>
+                  </tr>
+                )}
+              </TableBody>
+            </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={filteredLogs.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </>
         </DashboardCard>
       </>
     </DashboardCard>
