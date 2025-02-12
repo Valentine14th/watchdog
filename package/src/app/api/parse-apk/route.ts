@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import ApkReader from "@devicefarmer/adbkit-apkreader";
+// @ts-ignore
+import ApkReader from '@devicefarmer/adbkit-apkreader';
 
 export async function POST(req: NextRequest) {
   try {
