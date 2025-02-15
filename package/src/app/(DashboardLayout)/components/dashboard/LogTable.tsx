@@ -62,7 +62,7 @@ const filterQuery = (
   );
 };
 
-const LogTable = ({ log }: { log: any[] }) => {
+const LogTable = ({ log, repo }: { log: any[]; repo: string }) => {
   const [selectedVersions, setSelectedVersions] = useState([]);
   const [selectedArch, setSelectedArch] = useState([]);
   const [selectedApp, setSelectedApp] = useState([]);
@@ -122,10 +122,18 @@ const LogTable = ({ log }: { log: any[] }) => {
     setPage(0);
   }, [selectedVersions, selectedArch, selectedApp, selectedReproducible]);
 
+  const githubrepo = useMemo(() => `https://github.com/${repo}`, [repo]);
+
   return (
     <DashboardCard title="Reproducible Build Log">
       <>
-        <Typography variant="h6" sx={{ textAlign: "center" }}>
+        <Typography variant="h6" sx={{ marginBottom: "20px", whiteSpace: "pre-line" }}>
+          {`This table shows the logs of the reproduction attempts made by `}
+            <a href={githubrepo}>{repo}</a> 
+            {`.
+            For increased confidence, cross-check your results with other verifiers!`}
+        </Typography>
+        <Typography variant="body1" sx={{ textAlign: "center" }}>
           Filter the logs by using the options below:
         </Typography>
         <Box

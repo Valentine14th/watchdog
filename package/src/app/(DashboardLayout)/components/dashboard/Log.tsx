@@ -3,16 +3,15 @@ import LogTable from "./LogTable";
 import ApkSha256Uploader from "./ApkUploader";
 
 // GitHub repo details
+const githubRepo = "Valentine14th/rbtlog";
+// Raw files from repo
 // const files = [
-//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.libre.json",
-//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.work.json",
-//   "https://raw.githubusercontent.com/Valentine14th/rbtlog/log/logs/ch.threema.app.onprem.json",
+//   `https://raw.githubusercontent.com/${githubRepo}/log/logs/ch.threema.app.libre.json`,
+//   `https://raw.githubusercontent.com/${githubRepo}/log/logs/ch.threema.app.work.json`,
+//   `https://raw.githubusercontent.com/${githubRepo}/log/logs/ch.threema.app.onprem.json`,
 // ];
-// const files = [
-//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.libre.json",
-//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.work.json",
-//   "https://api.github.com/repos/Valentine14th/rbtlog/contents/logs/ch.threema.app.onprem.json",
-// ];
+
+// GitHub pages
 const files = [
   "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.libre.json",
   "https://valentine14th.github.io/rbtlog/logs/ch.threema.app.work.json",
@@ -81,7 +80,7 @@ const Log = () => {
   return (
     <>
       <ApkSha256Uploader log={flatLog} />
-      <LogTable log={flatLog} />
+      <LogTable log={flatLog} repo={githubRepo} />
     </>
   );
 };
