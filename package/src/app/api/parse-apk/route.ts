@@ -1,25 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 // @ts-ignore
-import ApkReader from '@devicefarmer/adbkit-apkreader';
+import ApkReader from "@devicefarmer/adbkit-apkreader";
+
+// Helper function to compute SHA-256 hash
+async function computeSha256(buffer: Buffer): Promise<string> {
+  const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
+    const { fileUrl } = await req.json();
 
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    if (!fileUrl) {
+      return NextResponse.json({ error: "No file URL provided" }, { status: 400 });
     }
 
-    // Read the file as an array buffer
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    // Fetch the file from Vercel Blob
+    const response = await fetch(fileUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch APK file from Blob storage");
+    }
+
+    // Read file into a buffer
+    const fileBuffer = Buffer.from(await response.arrayBuffer());
 
     // Compute SHA-256 hash
-    const hashBuffer = await crypto.subtle.digest("SHA-256", fileBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    const hashHex = await computeSha256(fileBuffer);
 
-    // Parse APK manifest using adbkit-apkreader
+    // Parse APK manifest
     const reader = await ApkReader.open(fileBuffer);
     const manifest = await reader.readManifest();
 
