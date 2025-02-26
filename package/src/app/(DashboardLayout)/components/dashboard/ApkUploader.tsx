@@ -60,7 +60,7 @@ export default function ApkManifestUploader({ log }: { log: any[] }) {
       });
 
     } catch (error) {
-      console.error("Error handling APK:", error);
+      console.error("Error handling APK: ", error);
       setManifest(null);
     } finally {
       setLoading(false);
