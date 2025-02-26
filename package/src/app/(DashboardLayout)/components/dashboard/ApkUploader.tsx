@@ -9,6 +9,7 @@ import AppRow from "./AppRow";
 import { Box, Button, CircularProgress, Icon, Typography } from "@mui/material";
 import LogTableHead from "./LogTableHead";
 import ApkUploadInfoDropdown from "./ApkUploadInfoDropdown";
+import { upload } from "@vercel/blob/client";
 
 export default function ApkManifestUploader({ log }: { log: any[] }) {
   const [manifest, setManifest] = useState<any>(null);
@@ -24,27 +25,42 @@ export default function ApkManifestUploader({ log }: { log: any[] }) {
       alert("Please upload a valid APK file.");
       return;
     }
+
     setFileName(file.name);
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
+      // Step 1: Upload the file to Vercel Blob
+      const blob = await upload(file.name, file, {
+        access: "public", // Allows fetching the file after upload
+        handleUploadUrl: "/api/upload-apk",
+      });
+      console.log("APK uploaded successfully:", blob.url);
+
+      // Step 2: Fetch and parse the uploaded APK
       const response = await fetch("/api/parse-apk", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileUrl: blob.url }), // Send URL to backend
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload file");
+        throw new Error("Failed to parse APK");
       }
 
       const data = await response.json();
       setManifest(data.manifest);
       setSha256(data.sha256);
+
+      // Step 3: Delete the file after processing
+      await fetch("/api/delete-apk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileUrl: blob.url }), // Request file deletion
+      });
+
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error handling APK:", error);
       setManifest(null);
     } finally {
       setLoading(false);
